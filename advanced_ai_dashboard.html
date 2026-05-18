@@ -1,0 +1,519 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Productivity & Analytics Dashboard</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#eef2f7;
+    color:#222;
+}
+
+header{
+    background:#111827;
+    color:white;
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+header h1{
+    font-size:28px;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-left:20px;
+}
+
+.container{
+    width:92%;
+    margin:auto;
+    padding:30px 0;
+}
+
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.card{
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.card h2{
+    margin-bottom:10px;
+}
+
+.analytics{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:20px;
+}
+
+.chart-box{
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.task-box{
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.task-box input{
+    width:70%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+.task-box button{
+    padding:12px 20px;
+    background:#2563eb;
+    border:none;
+    color:white;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.task{
+    margin-top:15px;
+    background:#f4f4f4;
+    padding:15px;
+    border-radius:5px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.completed{
+    text-decoration:line-through;
+    opacity:0.6;
+}
+
+.progress-section{
+    margin-top:30px;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+}
+
+.progress-bar{
+    width:100%;
+    background:#ddd;
+    height:25px;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:15px;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:#2563eb;
+    text-align:center;
+    color:white;
+    line-height:25px;
+}
+
+.clock-section{
+    margin-top:30px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.clock-box,
+.weather-box{
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0 3px 10px rgba(0,0,0,0.1);
+    text-align:center;
+}
+
+#clock{
+    font-size:40px;
+    margin-top:15px;
+    color:#2563eb;
+}
+
+footer{
+    margin-top:40px;
+    background:#111827;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+canvas{
+    margin-top:20px;
+}
+
+@media(max-width:900px){
+
+    .analytics{
+        grid-template-columns:1fr;
+    }
+
+    .clock-section{
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>AI Productivity Dashboard</h1>
+
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Analytics</a>
+        <a href="#">Tasks</a>
+        <a href="#">Reports</a>
+        <a href="#">Contact</a>
+    </nav>
+
+</header>
+
+<div class="container">
+
+    <div class="dashboard">
+
+        <div class="card">
+            <h2>Total Projects</h2>
+            <h1 id="projects">12</h1>
+        </div>
+
+        <div class="card">
+            <h2>Completed Tasks</h2>
+            <h1 id="completedCount">0</h1>
+        </div>
+
+        <div class="card">
+            <h2>Pending Tasks</h2>
+            <h1 id="pendingCount">0</h1>
+        </div>
+
+        <div class="card">
+            <h2>Team Efficiency</h2>
+            <h1>92%</h1>
+        </div>
+
+    </div>
+
+    <div class="analytics">
+
+        <div class="chart-box">
+
+            <h2>Weekly Productivity Chart</h2>
+
+            <canvas id="chart" width="600" height="300"></canvas>
+
+        </div>
+
+        <div class="task-box">
+
+            <h2>Task Manager</h2>
+
+            <br>
+
+            <input type="text" id="taskInput" placeholder="Enter task">
+
+            <button onclick="addTask()">
+                Add
+            </button>
+
+            <div id="taskContainer"></div>
+
+        </div>
+
+    </div>
+
+    <div class="progress-section">
+
+        <h2>Project Completion Progress</h2>
+
+        <div class="progress-bar">
+
+            <div class="progress" id="progressBar">
+                0%
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="clock-section">
+
+        <div class="clock-box">
+
+            <h2>Live Digital Clock</h2>
+
+            <div id="clock"></div>
+
+        </div>
+
+        <div class="weather-box">
+
+            <h2>System Status</h2>
+
+            <br>
+
+            <h3 id="systemStatus">
+                Active
+            </h3>
+
+            <br>
+
+            <button onclick="toggleStatus()">
+                Toggle Status
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    <p>
+        AI Productivity Dashboard | HTML CSS JavaScript Project
+    </p>
+</footer>
+
+<script>
+
+let completedTasks = 0;
+let totalTasks = 0;
+
+function updateCounts(){
+
+    document.getElementById("completedCount").innerText = completedTasks;
+
+    document.getElementById("pendingCount").innerText = totalTasks - completedTasks;
+
+    let percentage = 0;
+
+    if(totalTasks > 0){
+
+        percentage = Math.floor((completedTasks / totalTasks) * 100);
+
+    }
+
+    let progressBar = document.getElementById("progressBar");
+
+    progressBar.style.width = percentage + "%";
+
+    progressBar.innerText = percentage + "%";
+
+}
+
+function addTask(){
+
+    let taskInput = document.getElementById("taskInput");
+
+    let taskText = taskInput.value;
+
+    if(taskText.trim() === ""){
+
+        alert("Please enter a task");
+
+        return;
+
+    }
+
+    totalTasks++;
+
+    updateCounts();
+
+    let taskContainer = document.getElementById("taskContainer");
+
+    let taskDiv = document.createElement("div");
+
+    taskDiv.classList.add("task");
+
+    let taskName = document.createElement("span");
+
+    taskName.innerText = taskText;
+
+    let buttonArea = document.createElement("div");
+
+    let completeButton = document.createElement("button");
+
+    completeButton.innerText = "Complete";
+
+    completeButton.onclick = function(){
+
+        if(!taskName.classList.contains("completed")){
+
+            taskName.classList.add("completed");
+
+            completedTasks++;
+
+            updateCounts();
+
+        }
+
+    }
+
+    let deleteButton = document.createElement("button");
+
+    deleteButton.innerText = "Delete";
+
+    deleteButton.style.marginLeft = "10px";
+
+    deleteButton.onclick = function(){
+
+        if(taskName.classList.contains("completed")){
+
+            completedTasks--;
+
+        }
+
+        totalTasks--;
+
+        updateCounts();
+
+        taskDiv.remove();
+
+    }
+
+    buttonArea.appendChild(completeButton);
+
+    buttonArea.appendChild(deleteButton);
+
+    taskDiv.appendChild(taskName);
+
+    taskDiv.appendChild(buttonArea);
+
+    taskContainer.appendChild(taskDiv);
+
+    taskInput.value = "";
+
+}
+
+function updateClock(){
+
+    let now = new Date();
+
+    let time = now.toLocaleTimeString();
+
+    document.getElementById("clock").innerText = time;
+
+}
+
+setInterval(updateClock,1000);
+
+updateClock();
+
+function toggleStatus(){
+
+    let status = document.getElementById("systemStatus");
+
+    if(status.innerText === "Active"){
+
+        status.innerText = "Maintenance";
+
+        status.style.color = "red";
+
+    }
+
+    else{
+
+        status.innerText = "Active";
+
+        status.style.color = "green";
+
+    }
+
+}
+
+const canvas = document.getElementById("chart");
+
+const ctx = canvas.getContext("2d");
+
+let values = [120,180,140,220,260,200,300];
+
+let labels = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+
+function drawChart(){
+
+    ctx.clearRect(0,0,600,300);
+
+    ctx.beginPath();
+
+    ctx.moveTo(50,250);
+
+    ctx.lineTo(550,250);
+
+    ctx.stroke();
+
+    ctx.beginPath();
+
+    ctx.moveTo(50,250);
+
+    ctx.lineTo(50,30);
+
+    ctx.stroke();
+
+    for(let i=0;i<values.length;i++){
+
+        let x = 80 + i*65;
+
+        let y = 250 - values[i]/1.5;
+
+        ctx.fillStyle = "#2563eb";
+
+        ctx.fillRect(x,y,40,250-y);
+
+        ctx.fillStyle = "#000";
+
+        ctx.fillText(labels[i],x+5,270);
+
+        ctx.fillText(values[i],x+2,y-10);
+
+    }
+
+}
+
+drawChart();
+
+</script>
+
+</body>
+</html>
